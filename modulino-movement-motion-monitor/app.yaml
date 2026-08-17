@@ -1,0 +1,6 @@
+name: Modulino Movement – Motion Monitor
+icon: 🏃
+description: Real-time accelerometer and gyroscope dashboard from the IMU.
+
+bricks:
+  - arduino:web_ui

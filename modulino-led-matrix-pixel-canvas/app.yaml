@@ -1,0 +1,6 @@
+name: Modulino LED Matrix – Pixel Canvas
+icon: 🖼️
+description: Draw pixels on a 12×8 LED matrix and export the frame as a C++ byte array.
+
+bricks:
+  - arduino:web_ui

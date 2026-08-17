@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino — Address Changer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>📇 Modulino — Address Changer</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+
+    <div id="statusBar" class="statusbar info">
+      <div id="spinner"></div>
+      <span id="statusMsg">Loading…</span>
+    </div>
+
+    <div class="controls">
+      <button id="rescanBtn" class="btn primary">↺ Rescan I²C bus</button>
+      <button id="resetAllBtn" class="btn danger">Reset all to default</button>
+    </div>
+
+    <details class="tip-box">
+      <summary>ℹ Multiple identical nodes at the same address?</summary>
+      <p>
+        Two nodes of the same type share the same default I²C address and appear as a single
+        entry — address changes will affect both at once. To configure them independently:
+        <strong>disconnect all but one</strong> → click <em>Rescan</em> → change that device's
+        address → reconnect the others and rescan again.
+      </p>
+    </details>
+
+    <section class="card">
+      <h2>Connected Devices</h2>
+      <div id="deviceList"></div>
+    </section>
+
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

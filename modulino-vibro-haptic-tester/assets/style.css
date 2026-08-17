@@ -1,0 +1,146 @@
+:root {
+  --bg:      #0f1117;
+  --surface: #1c1f2a;
+  --border:  #2e3244;
+  --accent:  #4fa3e0;
+  --text:    #e2e8f0;
+  --muted:   #8892a4;
+  --green:   #22c55e;
+  --red:     #ef4444;
+  --radius:  10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+header h1 { font-size: 1.35rem; letter-spacing: -0.02em; }
+
+.status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.status.connected    { background: var(--green); color: #fff; }
+.status.disconnected { background: var(--red);   color: #fff; }
+.status.connecting   { background: var(--muted); color: #fff; }
+
+main { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+}
+
+.card h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+
+/* Power level grid */
+.power-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+/* Buttons */
+.btn {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.btn:hover    { opacity: 0.85; }
+.btn:active   { opacity: 0.7;  }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn.danger {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+
+/* Actions card */
+.actions-card {
+  display: flex;
+  gap: 1rem;
+}
+
+.actions-card .btn {
+  flex: 1;
+  font-size: 1rem;
+  padding: 0.75rem;
+}
+
+/* Buzz button */
+#buzz-btn {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Duration slider */
+.brightness-row { display: flex; align-items: center; gap: 1rem; }
+
+#duration-slider {
+  flex: 1;
+  accent-color: var(--accent);
+  height: 6px;
+  cursor: pointer;
+}
+
+#duration-value {
+  width: 5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+/* Last triggered */
+.last-triggered {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+@media (min-width: 600px) {
+  main { max-width: 700px; margin: 0 auto; }
+}

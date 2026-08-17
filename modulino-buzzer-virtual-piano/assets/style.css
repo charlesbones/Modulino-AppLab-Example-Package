@@ -1,0 +1,198 @@
+:root {
+  --bg:        #0f1117;
+  --surface:   #1c1f2a;
+  --border:    #2e3244;
+  --accent:    #4fa3e0;
+  --text:      #e2e8f0;
+  --muted:     #8892a4;
+  --green:     #22c55e;
+  --red:       #ef4444;
+  --radius:    10px;
+
+  --white-key-w: 48px;
+  --white-key-h: 160px;
+  --black-key-w: 30px;
+  --black-key-h: 100px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+header h1 { font-size: 1.35rem; letter-spacing: -0.02em; }
+
+.status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.status.connected    { background: var(--green); color: #fff; }
+.status.disconnected { background: var(--red);   color: #fff; }
+.status.connecting   { background: var(--muted); color: #fff; }
+
+/* ── Layout ─────────────────────────────────────────────── */
+main { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+}
+
+.card h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+
+/* ── Shortcuts ───────────────────────────────────────────── */
+.shortcut-grid { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+}
+
+.shortcut-label { color: var(--muted); min-width: 210px; }
+
+.shortcut-keys {
+  font-family: 'Courier New', monospace;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+/* ── Piano scroll wrapper ────────────────────────────────── */
+.piano-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+/* ── Piano container ─────────────────────────────────────── */
+#piano {
+  position: relative;
+  display: flex;
+  height: var(--white-key-h);
+  user-select: none;
+}
+
+/* ── White keys ──────────────────────────────────────────── */
+.white-key {
+  position: relative;
+  width: var(--white-key-w);
+  height: var(--white-key-h);
+  background: #f0f0f0;
+  border: 1px solid #999;
+  border-radius: 0 0 6px 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 8px;
+  gap: 2px;
+  transition: background 0.05s;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.white-key:hover   { background: #e0eeff; }
+.white-key.active  { background: var(--accent); }
+
+/* ── Black keys ──────────────────────────────────────────── */
+.black-key {
+  position: absolute;
+  width: var(--black-key-w);
+  height: var(--black-key-h);
+  background: #222;
+  border: 1px solid #111;
+  border-radius: 0 0 4px 4px;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 6px;
+  gap: 2px;
+  transition: background 0.05s;
+  top: 0;
+}
+
+.black-key:hover   { background: #3a3a3a; }
+.black-key.active  { background: #1a5fa0; }
+
+/* ── Key labels ──────────────────────────────────────────── */
+.note-label {
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: #666;
+  text-align: center;
+  line-height: 1;
+}
+
+.white-key.active .note-label { color: #fff; }
+
+.black-key .note-label {
+  color: #aaa;
+  font-size: 0.5rem;
+}
+
+.black-key.active .note-label { color: #fff; }
+
+.key-shortcut {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.black-key .key-shortcut {
+  font-size: 0.5rem;
+  color: #7ab8e0;
+}
+
+.white-key.active .key-shortcut,
+.black-key.active .key-shortcut { color: #fff; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (min-width: 600px) {
+  main { max-width: 900px; margin: 0 auto; }
+}
+
+/* ── Centering ───────────────────────────────────────────── */
+body { display: flex; flex-direction: column; align-items: center; }
+
+header { width: 100%; max-width: 900px; }
+
+main { width: 100%; align-items: center; }
+
+.piano-scroll { display: flex; justify-content: center; }
+
+.shortcut-grid { align-items: center; }

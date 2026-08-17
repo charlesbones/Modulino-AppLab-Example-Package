@@ -1,0 +1,6 @@
+name: Modulino Hub – Multi-Channel Dashboard
+icon: 🔀
+description: Scan all 8 Modulino Hub channels and see which node is on each — even nodes that share an address.
+
+bricks:
+  - arduino:web_ui

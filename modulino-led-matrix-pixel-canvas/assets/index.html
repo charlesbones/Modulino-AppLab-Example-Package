@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino LED Matrix – Pixel Canvas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🖼️ Modulino LED Matrix – Pixel Canvas</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Canvas</h2>
+      <div class="pixel-grid" id="pixel-grid"></div>
+      <div class="canvas-actions">
+        <button class="btn danger" id="clear-btn">Clear</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Export</h2>
+      <p class="export-hint">Paste this array into your Arduino sketch. Rename <code>MY_ICON</code> before use.</p>
+      <textarea id="export-output" readonly spellcheck="false"></textarea>
+      <div class="export-actions">
+        <button class="btn" id="copy-btn">Copy</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

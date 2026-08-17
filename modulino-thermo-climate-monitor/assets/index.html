@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Thermo – Climate Monitor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🌡️ Modulino Thermo – Climate Monitor</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+    <div class="readings-grid">
+      <section class="card reading-card">
+        <div class="reading-icon">🌡️</div>
+        <div class="reading-label">Temperature</div>
+        <div class="reading-value" id="temperature">—</div>
+        <div class="reading-unit">°C</div>
+      </section>
+
+      <section class="card reading-card">
+        <div class="reading-icon">💧</div>
+        <div class="reading-label">Humidity</div>
+        <div class="reading-value" id="humidity">—</div>
+        <div class="reading-unit">%RH</div>
+      </section>
+    </div>
+
+    <p class="last-updated">Last updated: <span id="last-updated">—</span></p>
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

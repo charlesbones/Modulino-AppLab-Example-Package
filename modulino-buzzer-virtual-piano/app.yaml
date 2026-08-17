@@ -1,0 +1,6 @@
+name: Modulino Buzzer – Virtual Piano
+icon: 🎹
+description: A 2-octave virtual piano that plays real tones on the Modulino Buzzer.
+
+bricks:
+  - arduino:web_ui

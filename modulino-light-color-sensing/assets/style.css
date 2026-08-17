@@ -1,0 +1,211 @@
+:root {
+  --bg:      #0f1117;
+  --surface: #1c1f2a;
+  --border:  #2e3244;
+  --accent:  #4fa3e0;
+  --text:    #e2e8f0;
+  --muted:   #8892a4;
+  --green:   #22c55e;
+  --red:     #ef4444;
+  --radius:  10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* ── Header ── */
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+header h1 { font-size: 1.35rem; letter-spacing: -0.02em; }
+
+.status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.status.connected    { background: var(--green); color: #fff; }
+.status.disconnected { background: var(--red);   color: #fff; }
+.status.connecting   { background: var(--muted); color: #fff; }
+
+/* ── Layout ── */
+main { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+}
+
+.card h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+
+/* ── Color swatch ── */
+.color-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.swatch {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  background: #111;
+  flex-shrink: 0;
+  transition: background-color 0.3s;
+}
+
+.color-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.color-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.color-hex {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-family: monospace;
+}
+
+/* ── RGB bars ── */
+.channels { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.channel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.channel-label {
+  width: 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  transition: width 0.3s;
+}
+
+.channel-value {
+  width: 2.5rem;
+  text-align: right;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+/* ── Light readings ── */
+.readings { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.reading-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.reading-label {
+  flex: 1;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.reading-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 4rem;
+  text-align: right;
+}
+
+.reading-unit {
+  color: var(--muted);
+  font-size: 0.8rem;
+  width: 3.5rem;
+}
+
+/* ── Responsive ── */
+@media (min-width: 600px) {
+  main { max-width: 700px; margin: 0 auto; }
+}
+
+/* ── Info note ── */
+.note {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+
+.note-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+.note-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.note-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.note-text {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}

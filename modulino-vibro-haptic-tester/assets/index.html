@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Vibro – Haptic Tester</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>📳 Modulino Vibro – Haptic Tester</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Power Level</h2>
+      <div class="power-grid" id="power-grid">
+        <button class="btn power-btn" data-power="25">Gentle</button>
+        <button class="btn power-btn" data-power="30">Moderate</button>
+        <button class="btn power-btn" data-power="35">Medium</button>
+        <button class="btn power-btn" data-power="40">Intense</button>
+        <button class="btn power-btn" data-power="45">Powerful</button>
+        <button class="btn power-btn active" data-power="50">Maximum</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Duration</h2>
+      <div class="brightness-row">
+        <input type="range" id="duration-slider" min="50" max="2000" step="50" value="500" />
+        <span id="duration-value">500 ms</span>
+      </div>
+    </section>
+
+    <section class="card actions-card">
+      <button class="btn" id="buzz-btn">⚡ Buzz!</button>
+      <button class="btn danger" id="stop-btn">■ Stop</button>
+    </section>
+
+    <section class="card">
+      <h2>Last Triggered</h2>
+      <p id="last-triggered" class="last-triggered">—</p>
+    </section>
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

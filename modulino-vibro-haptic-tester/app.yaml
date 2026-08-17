@@ -1,0 +1,6 @@
+name: Modulino Vibro – Haptic Tester
+icon: 📳
+description: Trigger and fine-tune vibration pulses from the browser.
+
+bricks:
+  - arduino:web_ui

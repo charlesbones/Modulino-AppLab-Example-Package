@@ -1,0 +1,6 @@
+name: Modulino Thermo – Climate Monitor
+icon: 🌡️
+description: Live temperature and humidity dashboard from the Modulino Thermo sensor.
+
+bricks:
+  - arduino:web_ui

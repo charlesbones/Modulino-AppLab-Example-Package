@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Light</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>💡 Modulino Light - Light and color sensing</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+    <!-- Light Readings -->
+    <section class="card">
+      <h2>Light Readings</h2>
+      <div class="readings">
+        <div class="reading-item">
+          <span class="reading-label">Illuminance</span>
+          <span id="val-lux" class="reading-value">—</span>
+          <span class="reading-unit">lux</span>
+        </div>
+        <div class="reading-item">
+          <span class="reading-label">Raw Ambient</span>
+          <span id="val-raw" class="reading-value">—</span>
+          <span class="reading-unit">counts</span>
+        </div>
+        <div class="reading-item">
+          <span class="reading-label">Infrared</span>
+          <span id="val-ir" class="reading-value">—</span>
+          <span class="reading-unit">counts</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RGB Channels -->
+    <section class="card">
+      <h2>RGB Channels</h2>
+      <div class="channels">
+        <div class="channel">
+          <span class="channel-label" style="color:var(--red);">R</span>
+          <div class="bar-track">
+            <div id="bar-r" class="bar-fill" style="background:var(--red);"></div>
+          </div>
+          <span id="val-r" class="channel-value">—</span>
+        </div>
+        <div class="channel">
+          <span class="channel-label" style="color:var(--green);">G</span>
+          <div class="bar-track">
+            <div id="bar-g" class="bar-fill" style="background:var(--green);"></div>
+          </div>
+          <span id="val-g" class="channel-value">—</span>
+        </div>
+        <div class="channel">
+          <span class="channel-label" style="color:var(--accent);">B</span>
+          <div class="bar-track">
+            <div id="bar-b" class="bar-fill" style="background:var(--accent);"></div>
+          </div>
+          <span id="val-b" class="channel-value">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detected Color -->
+    <section class="card">
+      <h2>Detected Color</h2>
+      <div class="color-row">
+        <div id="color-swatch" class="swatch"></div>
+        <div class="color-info">
+          <span id="color-name" class="color-name">—</span>
+          <span id="color-hex" class="color-hex">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Color detection note -->
+    <div class="note">
+      <span class="note-icon">💡</span>
+      <div class="note-body">
+        <span class="note-title">External light source required for color detection</span>
+        <span class="note-text">
+          For accurate color detection with the Modulino Light, block direct ambient light
+          reaching the sensor and provide a stable, consistent light source aimed at the target.
+          Varying ambient light will affect the RGB readings and reduce color classification accuracy.
+        </span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Socket.IO client library (version 4, matches the Python server) -->
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

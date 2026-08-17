@@ -1,0 +1,141 @@
+/* ── Design tokens ───────────────────────────────────────────── */
+:root {
+  --bg:      #0f1117;
+  --surface: #1c1f2a;
+  --border:  #2e3244;
+  --accent:  #4fa3e0;
+  --text:    #e2e8f0;
+  --muted:   #8892a4;
+  --green:   #22c55e;
+  --red:     #ef4444;
+  --radius:  10px;
+}
+
+/* ── Base reset ──────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* ── Header + status badge ───────────────────────────────────── */
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+header h1 { font-size: 1.35rem; letter-spacing: -0.02em; }
+
+.status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.status.connected    { background: var(--green); color: #fff; }
+.status.disconnected { background: var(--red);   color: #fff; }
+.status.connecting   { background: var(--muted); color: #fff; }
+
+/* ── Cards ───────────────────────────────────────────────────── */
+main { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  align-self: flex-start;
+}
+
+.hint { font-size: 0.78rem; color: var(--muted); align-self: flex-start; margin-top: -0.5rem; }
+
+/* ── SVG gauge ───────────────────────────────────────────────── */
+.gauge-wrap { position: relative; width: 240px; height: 240px; }
+svg.gauge { width: 100%; height: 100%; }
+
+.gauge-label {
+  position: absolute;
+  bottom: 46px;
+  width: 100%;
+  text-align: center;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.gauge-unit {
+  position: absolute;
+  bottom: 28px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ── Event counter rows ──────────────────────────────────────── */
+.event-rows { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+
+.event-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+}
+
+.event-name  { color: var(--muted); }
+.event-count { font-weight: 700; color: var(--text); min-width: 24px; text-align: right; }
+
+.event-row.press   .event-name { color: var(--accent); }
+.event-row.release .event-name { color: var(--green);  }
+.event-row.dtap    .event-name { color: #f5a623;       }
+
+.event-count.flash { color: #ffe080; }
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn:hover  { opacity: 0.85; }
+.btn:active { opacity: 0.7;  }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (min-width: 600px) {
+  main { max-width: 480px; margin: 0 auto; }
+}

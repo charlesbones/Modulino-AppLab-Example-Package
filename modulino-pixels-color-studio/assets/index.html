@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Pixels – Color Studio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <h1>🎨 Modulino Pixels – Color Studio</h1>
+
+  <!-- ── Animations ──────────────────────────────────────────────────── -->
+  <div>
+    <p class="section-label">Animations</p>
+    <div class="buttons-row">
+
+      <!-- Hue Wheel card -->
+      <div class="btn-card" id="card-hue-wheel">
+        <div class="anim-icon">🌈</div>
+        <div class="btn-label">Hue Wheel</div>
+        <button class="anim-btn" id="btn-hue-wheel">Start</button>
+      </div>
+
+      <!-- Sweep card -->
+      <div class="btn-card" id="card-sweep">
+        <div class="anim-icon">↔</div>
+        <div class="btn-label">Sweep</div>
+        <button class="anim-btn" id="btn-sweep">Start</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Brightness ──────────────────────────────────────────────────── -->
+  <div>
+    <p class="section-label">Brightness</p>
+    <div class="brightness-row">
+      <input type="range" id="brightness-slider" min="0" max="100" value="25" />
+      <span id="brightness-value">25</span>
+    </div>
+  </div>
+
+  <!-- ── Fill All ────────────────────────────────────────────────────── -->
+  <div>
+    <p class="section-label">Fill All LEDs</p>
+    <div class="fill-row">
+      <input type="color" id="fill-color" value="#000000" />
+      <button id="fill-btn">Apply to all</button>
+    </div>
+  </div>
+
+  <!-- ── Individual LEDs ─────────────────────────────────────────────── -->
+  <div>
+    <p class="section-label">Individual LEDs</p>
+    <!-- 8 LED cards are built dynamically by app.js -->
+    <div class="leds-row" id="leds-grid"></div>
+  </div>
+
+  <!-- ── Status ──────────────────────────────────────────────────────── -->
+  <div id="status">Connecting…</div>
+
+  <!-- Socket.IO client library (version 4, matches the Python server) -->
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Latch Relay – Smart Switch</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🔌 Modulino Latch Relay – Smart Switch</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+    <section class="card status-card">
+      <div class="relay-badge" id="relay-badge">? UNKNOWN</div>
+    </section>
+
+    <section class="card">
+      <h2>Control</h2>
+      <div class="control-row">
+        <button class="btn" id="btn-on">Turn ON</button>
+        <button class="btn danger" id="btn-off">Turn OFF</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <p class="info-note">ℹ️ This relay holds its state even when power is removed.</p>
+    </section>
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

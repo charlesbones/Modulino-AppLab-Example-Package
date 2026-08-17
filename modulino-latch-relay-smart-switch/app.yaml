@@ -1,0 +1,6 @@
+name: Modulino Latch Relay – Smart Switch
+icon: 🔌
+description: Control a latching relay and monitor its state from the browser.
+
+bricks:
+  - arduino:web_ui

@@ -1,0 +1,6 @@
+name: Modulino Pixels – Color Studio
+icon: 🎨
+description: Pick colors, set brightness, and run on-board animations on the 8 RGB LEDs.
+
+bricks:
+  - arduino:web_ui

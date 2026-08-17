@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Movement – Motion Monitor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🏃 Modulino Movement – Motion Monitor</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+    <!-- Accelerometer -->
+    <section class="card">
+      <h2>⚡ Accelerometer <span class="unit-hint">(g)</span></h2>
+      <div class="axis-grid">
+        <div class="axis-row">
+          <span class="axis-label">X</span>
+          <div class="bar-track">
+            <div class="bar-center-line"></div>
+            <div class="bar-fill accent" id="bar-ax"></div>
+          </div>
+          <span class="axis-value" id="val-ax">0.00</span>
+        </div>
+        <div class="axis-row">
+          <span class="axis-label">Y</span>
+          <div class="bar-track">
+            <div class="bar-center-line"></div>
+            <div class="bar-fill accent" id="bar-ay"></div>
+          </div>
+          <span class="axis-value" id="val-ay">0.00</span>
+        </div>
+        <div class="axis-row">
+          <span class="axis-label">Z</span>
+          <div class="bar-track">
+            <div class="bar-center-line"></div>
+            <div class="bar-fill accent" id="bar-az"></div>
+          </div>
+          <span class="axis-value" id="val-az">0.00</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gyroscope -->
+    <section class="card">
+      <h2>🔄 Gyroscope <span class="unit-hint">(dps)</span></h2>
+      <div class="axis-grid">
+        <div class="axis-row">
+          <span class="axis-label">X</span>
+          <div class="bar-track">
+            <div class="bar-center-line"></div>
+            <div class="bar-fill green" id="bar-gx"></div>
+          </div>
+          <span class="axis-value" id="val-gx">0.00</span>
+        </div>
+        <div class="axis-row">
+          <span class="axis-label">Y</span>
+          <div class="bar-track">
+            <div class="bar-center-line"></div>
+            <div class="bar-fill green" id="bar-gy"></div>
+          </div>
+          <span class="axis-value" id="val-gy">0.00</span>
+        </div>
+        <div class="axis-row">
+          <span class="axis-label">Z</span>
+          <div class="bar-track">
+            <div class="bar-center-line"></div>
+            <div class="bar-fill green" id="bar-gz"></div>
+          </div>
+          <span class="axis-value" id="val-gz">0.00</span>
+        </div>
+      </div>
+    </section>
+
+    <p class="last-updated">Last updated: <span id="last-updated">—</span></p>
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

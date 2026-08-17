@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Knob — Live Gauge</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>🎛️ Modulino Knob — Live Gauge</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <h2>Encoder Value</h2>
+      <div class="gauge-wrap">
+        <svg class="gauge" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <path id="arc-bg" fill="none" stroke="var(--border)" stroke-width="18" stroke-linecap="round" />
+          <path id="arc-fg" fill="none" stroke="var(--accent)" stroke-width="18" stroke-linecap="round" />
+        </svg>
+        <div class="gauge-label" id="gauge-value">0</div>
+        <div class="gauge-unit">/ 100</div>
+      </div>
+      <button class="btn" id="btn-reset">⟳ Reset</button>
+    </section>
+
+    <section class="card">
+      <h2>Button Events</h2>
+      <p class="hint">Handled with the Button2 library — double-tap also resets the gauge.</p>
+      <div class="event-rows">
+        <div class="event-row press">
+          <span class="event-name">Press</span>
+          <span class="event-count" id="press">0</span>
+        </div>
+        <div class="event-row release">
+          <span class="event-name">Release</span>
+          <span class="event-count" id="release">0</span>
+        </div>
+        <div class="event-row dtap">
+          <span class="event-name">Double tap</span>
+          <span class="event-count" id="dtap">0</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

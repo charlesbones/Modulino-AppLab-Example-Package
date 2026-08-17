@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino LED Matrix – Text &amp; Gallery</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>📺 Modulino LED Matrix – Text &amp; Gallery</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Scroll Text</h2>
+      <div class="text-row">
+        <input type="text" id="text-input" maxlength="64" placeholder="Type something…" />
+        <button class="btn" id="scroll-btn">Scroll</button>
+        <button class="btn danger" id="stop-btn">Stop</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Icons</h2>
+      <div class="gallery-grid" id="icons-grid"></div>
+    </section>
+
+    <section class="card">
+      <h2>Animations</h2>
+      <div class="gallery-grid" id="animations-grid"></div>
+    </section>
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

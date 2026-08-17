@@ -1,0 +1,6 @@
+name: Modulino Motors – Motor Control
+icon: ⚙️
+description: Drive two DC motors or a stepper from the browser, with live current-sense telemetry.
+
+bricks:
+  - arduino:web_ui

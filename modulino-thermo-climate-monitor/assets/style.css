@@ -1,0 +1,117 @@
+:root {
+  --bg:      #0f1117;
+  --surface: #1c1f2a;
+  --border:  #2e3244;
+  --accent:  #4fa3e0;
+  --text:    #e2e8f0;
+  --muted:   #8892a4;
+  --green:   #22c55e;
+  --red:     #ef4444;
+  --radius:  10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+header h1 { font-size: 1.35rem; letter-spacing: -0.02em; }
+
+.status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.status.connected    { background: var(--green); color: #fff; }
+.status.disconnected { background: var(--red);   color: #fff; }
+.status.connecting   { background: var(--muted); color: #fff; }
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Two-column grid for reading cards */
+.readings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+}
+
+/* Reading card layout */
+.reading-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  text-align: center;
+}
+
+.reading-icon  { font-size: 2rem; }
+
+.reading-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.reading-value {
+  font-size: 3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.reading-unit {
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+/* Last updated */
+.last-updated {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.last-updated span { color: var(--text); }
+
+/* Narrow screens: stack cards */
+@media (max-width: 400px) {
+  .readings-grid { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 600px) {
+  main { max-width: 700px; margin: 0 auto; }
+}

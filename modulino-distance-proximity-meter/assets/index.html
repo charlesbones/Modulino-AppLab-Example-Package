@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Distance – Proximity Meter</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>📏 Modulino Distance – Proximity Meter</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+    <section class="card readout-card">
+      <div class="distance-primary" id="distance-primary">— mm</div>
+      <div class="distance-secondary" id="distance-secondary">— cm</div>
+    </section>
+
+    <section class="card">
+      <h2>Proximity</h2>
+      <div class="bar-track">
+        <div class="bar-fill" id="bar-fill"></div>
+      </div>
+      <div class="bar-labels">
+        <span>Far (1300 mm)</span>
+        <span>Close (0 mm)</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

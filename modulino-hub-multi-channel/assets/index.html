@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Hub — Multi-Channel Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>🔀 Modulino Hub — Multi-Channel Dashboard</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+
+    <div class="controls">
+      <button id="rescanBtn" class="btn primary">↺ Rescan channels</button>
+      <span class="summary" id="summary">—</span>
+    </div>
+
+    <p class="hint">
+      Each channel is an isolated I²C bus. Nodes that share the same default address
+      can live on different channels without conflict.
+    </p>
+
+    <section class="channel-grid" id="grid"></section>
+
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

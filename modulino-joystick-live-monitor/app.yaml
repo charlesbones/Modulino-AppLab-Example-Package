@@ -1,0 +1,6 @@
+name: Modulino Joystick – Live Monitor
+icon: 🕹️
+description: Real-time joystick position and click-button event monitor.
+
+bricks:
+  - arduino:web_ui

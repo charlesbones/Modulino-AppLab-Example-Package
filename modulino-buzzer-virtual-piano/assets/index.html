@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎹 Virtual Piano</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🎹 Modulino Buzzer - Virtual Piano</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Keyboard Shortcuts</h2>
+      <div class="shortcut-grid">
+        <div class="shortcut-row">
+          <span class="shortcut-label">White keys (Octave 4):</span>
+          <span class="shortcut-keys">A &nbsp;S &nbsp;D &nbsp;F &nbsp;G &nbsp;H &nbsp;J</span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Black keys (Octave 4):</span>
+          <span class="shortcut-keys">W &nbsp;E &nbsp; &nbsp;&nbsp;T &nbsp;Y &nbsp;U</span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">White keys (Octave 5, partial):</span>
+          <span class="shortcut-keys">K &nbsp;L &nbsp;;</span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Black keys (Octave 5, partial):</span>
+          <span class="shortcut-keys">O &nbsp;P</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card piano-card">
+      <h2>Piano</h2>
+      <div class="piano-scroll">
+        <div id="piano"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Joystick – Live Monitor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🕹️ Modulino Joystick – Live Monitor</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+    <section class="card pad-card">
+      <h2>Position</h2>
+      <div class="pad-wrap">
+        <canvas id="pad" width="200" height="200"></canvas>
+      </div>
+      <div class="xy-readout">
+        <span>X: <strong id="val-x">0</strong></span>
+        <span>Y: <strong id="val-y">0</strong></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Click Button Events</h2>
+      <div class="event-rows">
+        <div class="event-row press">
+          <span class="event-name">Press</span>
+          <span class="event-count" id="count-press">0</span>
+        </div>
+        <div class="event-row release">
+          <span class="event-name">Release</span>
+          <span class="event-count" id="count-release">0</span>
+        </div>
+        <div class="event-row dtap">
+          <span class="event-name">Double tap</span>
+          <span class="event-count" id="count-dtap">0</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

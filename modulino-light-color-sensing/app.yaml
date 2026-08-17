@@ -1,0 +1,6 @@
+name: Modulino Light – Color Sensing
+icon: 💡
+description: Live dashboard for all Modulino Light channels: lux, ambient, IR, RGB and color name.
+
+bricks:
+  - arduino:web_ui

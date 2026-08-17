@@ -1,0 +1,6 @@
+name: Modulino Knob – Live Gauge
+icon: 🎛️
+description: Real-time gauge driven by the Modulino Knob, with press, release and double-tap events.
+
+bricks:
+  - arduino:web_ui

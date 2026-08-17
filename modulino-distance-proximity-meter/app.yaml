@@ -1,0 +1,6 @@
+name: Modulino Distance – Proximity Meter
+icon: 📏
+description: Live Time-of-Flight distance readings with a visual proximity bar.
+
+bricks:
+  - arduino:web_ui

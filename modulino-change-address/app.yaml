@@ -1,0 +1,6 @@
+name: Modulino – Address Changer
+icon: 📇
+description: Scan the I²C bus and reconfigure the address of each connected Modulino node.
+
+bricks:
+  - arduino:web_ui

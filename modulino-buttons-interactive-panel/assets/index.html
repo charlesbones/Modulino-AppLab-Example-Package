@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Buttons — Interactive Panel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>🔘 Modulino Buttons — Interactive Panel</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <h2>Button Events</h2>
+      <div class="buttons-row">
+
+        <div class="btn-card" id="card-0">
+          <div class="btn-circle"></div>
+          <div class="btn-label">Button A</div>
+          <div class="event-rows">
+            <div class="event-row press">
+              <span class="event-name">Press</span>
+              <span class="event-count" id="press-0">0</span>
+            </div>
+            <div class="event-row release">
+              <span class="event-name">Release</span>
+              <span class="event-count" id="release-0">0</span>
+            </div>
+            <div class="event-row dtap">
+              <span class="event-name">Double tap</span>
+              <span class="event-count" id="dtap-0">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-card" id="card-1">
+          <div class="btn-circle"></div>
+          <div class="btn-label">Button B</div>
+          <div class="event-rows">
+            <div class="event-row press">
+              <span class="event-name">Press</span>
+              <span class="event-count" id="press-1">0</span>
+            </div>
+            <div class="event-row release">
+              <span class="event-name">Release</span>
+              <span class="event-count" id="release-1">0</span>
+            </div>
+            <div class="event-row dtap">
+              <span class="event-name">Double tap</span>
+              <span class="event-count" id="dtap-1">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-card" id="card-2">
+          <div class="btn-circle"></div>
+          <div class="btn-label">Button C</div>
+          <div class="event-rows">
+            <div class="event-row press">
+              <span class="event-name">Press</span>
+              <span class="event-count" id="press-2">0</span>
+            </div>
+            <div class="event-row release">
+              <span class="event-name">Release</span>
+              <span class="event-count" id="release-2">0</span>
+            </div>
+            <div class="event-row dtap">
+              <span class="event-name">Double tap</span>
+              <span class="event-count" id="dtap-2">0</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Onboard LED Control</h2>
+      <div class="leds-row">
+        <div class="led-card">
+          <div class="led-circle" id="led-0"></div>
+          <div class="led-label">LED A</div>
+          <button class="btn led-toggle-btn" data-index="0">Toggle</button>
+        </div>
+        <div class="led-card">
+          <div class="led-circle" id="led-1"></div>
+          <div class="led-label">LED B</div>
+          <button class="btn led-toggle-btn" data-index="1">Toggle</button>
+        </div>
+        <div class="led-card">
+          <div class="led-circle" id="led-2"></div>
+          <div class="led-label">LED C</div>
+          <button class="btn led-toggle-btn" data-index="2">Toggle</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

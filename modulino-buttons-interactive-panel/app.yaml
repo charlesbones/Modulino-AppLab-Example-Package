@@ -1,0 +1,6 @@
+name: Modulino Buttons – Interactive Panel
+icon: 🔘
+description: Physical button presses shown live in the browser, with independent control of each onboard LED.
+
+bricks:
+  - arduino:web_ui

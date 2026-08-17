@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulino Motors — Motor Control</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>⚙️ Modulino Motors — Motor Control</h1>
+    <span id="status" class="status connecting">Connecting…</span>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <h2>Mode</h2>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="mode-dc"      data-stepper="0">DC Motors</button>
+        <button class="mode-btn"        id="mode-stepper" data-stepper="1">Stepper</button>
+      </div>
+      <p class="hint">The two DC channels and the stepper share one H-bridge — only one mode is active at a time.</p>
+    </section>
+
+    <!-- ── DC mode ─────────────────────────────────────────── -->
+    <section class="card" id="panel-dc">
+      <h2>DC Motors</h2>
+      <div class="motors-row">
+
+        <div class="motor-card">
+          <div class="motor-label">Motor A</div>
+          <input type="range" min="0" max="100" value="0" id="speedA" class="slider" />
+          <div class="slider-value"><span id="speedA-val">0</span> %</div>
+          <label class="check"><input type="checkbox" id="invertA" /> Reverse</label>
+          <div class="current">A: <span id="currentA">0</span> mA</div>
+        </div>
+
+        <div class="motor-card">
+          <div class="motor-label">Motor B</div>
+          <input type="range" min="0" max="100" value="0" id="speedB" class="slider" />
+          <div class="slider-value"><span id="speedB-val">0</span> %</div>
+          <label class="check"><input type="checkbox" id="invertB" /> Reverse</label>
+          <div class="current">B: <span id="currentB">0</span> mA</div>
+        </div>
+
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="btn-apply">Apply</button>
+        <button class="btn danger"  id="btn-stop">■ Stop</button>
+      </div>
+    </section>
+
+    <!-- ── Stepper mode ────────────────────────────────────── -->
+    <section class="card hidden" id="panel-stepper">
+      <h2>Stepper</h2>
+      <div class="field">
+        <label for="steps">Steps <span class="muted">(negative = reverse)</span></label>
+        <input type="number" id="steps" value="200" step="1" />
+      </div>
+      <div class="field">
+        <label for="rpm">Speed (RPM)</label>
+        <input type="number" id="rpm" value="60" min="1" step="1" />
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="btn-move">▶ Move</button>
+        <span class="busy" id="busy-badge">Idle</span>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="libs/arduino.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

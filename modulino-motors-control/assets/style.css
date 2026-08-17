@@ -1,0 +1,102 @@
+/* ── Design tokens ───────────────────────────────────────────── */
+:root {
+  --bg:      #0f1117;
+  --surface: #1c1f2a;
+  --border:  #2e3244;
+  --accent:  #4fa3e0;
+  --text:    #e2e8f0;
+  --muted:   #8892a4;
+  --green:   #22c55e;
+  --red:     #ef4444;
+  --radius:  10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* ── Header + status badge ───────────────────────────────────── */
+header {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.5rem; margin-bottom: 1.5rem; text-align: center;
+}
+header h1 { font-size: 1.35rem; letter-spacing: -0.02em; }
+
+.status {
+  font-size: 0.8rem; font-weight: 600; padding: 0.25rem 0.75rem;
+  border-radius: 999px; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.status.connected    { background: var(--green); color: #fff; }
+.status.disconnected { background: var(--red);   color: #fff; }
+.status.connecting   { background: var(--muted); color: #fff; }
+
+/* ── Cards ───────────────────────────────────────────────────── */
+main { display: flex; flex-direction: column; gap: 1.25rem; max-width: 620px; margin: 0 auto; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem 1.5rem;
+}
+.card h2 {
+  font-size: 0.95rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1rem;
+}
+.hidden { display: none; }
+.hint { font-size: 0.78rem; color: var(--muted); margin-top: 0.75rem; }
+.muted { color: var(--muted); font-weight: 400; }
+
+/* ── Mode toggle ─────────────────────────────────────────────── */
+.mode-toggle { display: flex; gap: 8px; }
+.mode-btn {
+  flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--border);
+  border-radius: 8px; background: var(--bg); color: var(--muted);
+  font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+}
+.mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ── DC motor cards ──────────────────────────────────────────── */
+.motors-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+.motor-card {
+  flex: 1; min-width: 200px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1.25rem; display: flex; flex-direction: column;
+  align-items: center; gap: 0.6rem;
+}
+.motor-label { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.slider { width: 100%; accent-color: var(--accent); cursor: pointer; }
+.slider-value { font-size: 1.4rem; font-weight: 700; }
+.check { font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.check input { accent-color: var(--accent); }
+.current { font-size: 0.78rem; color: var(--muted); font-family: monospace; }
+
+/* ── Stepper fields ──────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 1rem; }
+.field label { font-size: 0.82rem; color: var(--muted); }
+.field input {
+  padding: 0.5rem 0.7rem; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg); color: var(--text); font-size: 0.95rem; font-family: monospace;
+}
+
+.busy {
+  font-size: 0.8rem; font-weight: 600; padding: 0.35rem 0.9rem;
+  border-radius: 999px; background: var(--border); color: var(--muted);
+}
+.busy.active { background: var(--accent); color: #fff; }
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn-row { display: flex; gap: 10px; align-items: center; margin-top: 1rem; }
+.btn {
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.55rem 1.3rem; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.btn:hover  { opacity: 0.85; }
+.btn:active { opacity: 0.7;  }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.danger  { background: var(--red);    border-color: var(--red);    color: #fff; }

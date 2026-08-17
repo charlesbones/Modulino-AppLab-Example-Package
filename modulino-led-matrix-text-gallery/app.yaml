@@ -1,0 +1,6 @@
+name: Modulino LED Matrix – Text & Gallery
+icon: 📺
+description: Scroll text across the 12×8 LED matrix, or pick from built-in icons and animations.
+
+bricks:
+  - arduino:web_ui
