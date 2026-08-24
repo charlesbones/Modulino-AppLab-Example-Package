@@ -37,6 +37,12 @@ void setup() {
   Modulino.begin();
   relay.begin();
 
+  // Latching relays retain their last state across power cycles, so force
+  // it off at boot regardless of how it was left — starting energized would
+  // be a safety hazard for whatever load is wired to it.
+  relay.reset();
+  relay_status = 0;
+
   Bridge.provide("get_state", rpc_get_state);
   Bridge.provide("relay_on",  rpc_relay_on);
   Bridge.provide("relay_off", rpc_relay_off);

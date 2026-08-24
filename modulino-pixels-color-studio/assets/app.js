@@ -11,6 +11,7 @@ const cardHueWheel     = document.getElementById("card-hue-wheel");
 const cardSweep        = document.getElementById("card-sweep");
 const btnHueWheel      = document.getElementById("btn-hue-wheel");
 const btnSweep         = document.getElementById("btn-sweep");
+const sweepColorInput  = document.getElementById("sweep-color");
 
 // ── Per-LED elements ──────────────────────────────────────────────────────────
 const ledCircles = [];
@@ -78,6 +79,7 @@ function applyState(state) {
 
   fillBtn.disabled = isAnimating;
   ledPickers.forEach(p => p.disabled = isAnimating);
+  sweepColorInput.disabled = anim === "hue_wheel";
 
   cardHueWheel.classList.toggle("active", anim === "hue_wheel");
   cardSweep.classList.toggle("active",    anim === "sweep");
@@ -108,11 +110,25 @@ btnHueWheel.addEventListener("click", () =>
     : ui.send_message("start_hue_wheel", {})
 );
 
-btnSweep.addEventListener("click", () =>
-  btnSweep.classList.contains("stop")
-    ? ui.send_message("stop_animation", {})
-    : ui.send_message("start_sweep",    {})
-);
+btnSweep.addEventListener("click", () => {
+  if (btnSweep.classList.contains("stop")) {
+    ui.send_message("stop_animation", {});
+  } else {
+    const { r, g, b } = hexToRgb(sweepColorInput.value);
+    ui.send_message("start_sweep", { r, g, b });
+  }
+});
+
+// Changing the colour while the sweep is running restarts it in the new colour.
+let sweepColorTimer = null;
+sweepColorInput.addEventListener("input", () => {
+  if (!btnSweep.classList.contains("stop")) return;
+  clearTimeout(sweepColorTimer);
+  sweepColorTimer = setTimeout(() => {
+    const { r, g, b } = hexToRgb(sweepColorInput.value);
+    ui.send_message("start_sweep", { r, g, b });
+  }, 120);
+});
 
 // ── Socket events ─────────────────────────────────────────────────────────────
 ui.on_connect(() => { statusEl.className = "status connected";    statusEl.textContent = "● Connected";    });

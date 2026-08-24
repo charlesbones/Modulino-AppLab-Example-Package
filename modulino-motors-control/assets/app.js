@@ -48,25 +48,29 @@ el("btn-move").addEventListener("click", () => {
   });
 });
 
-// ── Render on every state_update ─────────────────────────────────
+// ── Render on state_update (mode/speed/invert — command-driven only) ─
 function applyState(s) {
   applyMode(s.stepperMode);
 
-  // Reflect DC state (but don't fight the slider while the user drags it).
+  // Reflect DC state, but don't fight controls the user is still editing.
   if (document.activeElement !== speedA) { speedA.value = s.speedA; el("speedA-val").textContent = s.speedA; }
   if (document.activeElement !== speedB) { speedB.value = s.speedB; el("speedB-val").textContent = s.speedB; }
-  invertA.checked = s.invertA;
-  invertB.checked = s.invertB;
+  if (document.activeElement !== invertA) invertA.checked = s.invertA;
+  if (document.activeElement !== invertB) invertB.checked = s.invertB;
+}
 
-  el("currentA").textContent = Math.round(s.currentA);
-  el("currentB").textContent = Math.round(s.currentB);
+// ── Render on telemetry_update (current/busy — arrives ~5x/sec) ──────
+function applyTelemetry(t) {
+  el("currentA").textContent = Math.round(t.currentA);
+  el("currentB").textContent = Math.round(t.currentB);
 
   const badge = el("busy-badge");
-  badge.textContent = s.busy ? "Moving…" : "Idle";
-  badge.classList.toggle("active", s.busy);
+  badge.textContent = t.busy ? "Moving…" : "Idle";
+  badge.classList.toggle("active", t.busy);
 }
 
 ui.on_connect(() => { statusEl.className = "status connected";    statusEl.textContent = "● Connected";    });
 ui.on_disconnect(() => { statusEl.className = "status disconnected"; statusEl.textContent = "● Disconnected"; });
 
 ui.on_message("state_update", data => { if (data) applyState(data); });
+ui.on_message("telemetry_update", data => { if (data) applyTelemetry(data); });

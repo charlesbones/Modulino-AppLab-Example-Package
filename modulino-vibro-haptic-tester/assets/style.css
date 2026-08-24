@@ -69,6 +69,23 @@ main { display: flex; flex-direction: column; gap: 1.25rem; }
   gap: 0.6rem;
 }
 
+.power-slider-row { margin-top: 1rem; }
+
+#power-slider {
+  flex: 1;
+  accent-color: var(--accent);
+  height: 6px;
+  cursor: pointer;
+}
+
+#power-value {
+  width: 5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
 /* Buttons */
 .btn {
   background: var(--surface);

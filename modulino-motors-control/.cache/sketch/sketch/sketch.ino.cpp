@@ -1,0 +1,143 @@
+#include <Arduino.h>
+#line 1 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-motors-control/sketch/sketch.ino"
+// SPDX-FileCopyrightText: Copyright (C) Arduino s.r.l. and/or its affiliated companies
+//
+// SPDX-License-Identifier: MPL-2.0
+
+/*
+ * Modulino Motors — Motor Control
+ *
+ * Drives the Modulino Motors dual H-bridge from the browser. Two modes:
+ *   • DC mode      — two independent DC channels (A, B), 0–100 % speed,
+ *                    each with a direction (invert) flag.
+ *   • Stepper mode — one bipolar stepper, moved a number of steps at a
+ *                    target RPM.
+ *
+ * Every RPC returns the full JSON state so the browser stays in sync, and
+ * loop() streams live current-sense telemetry via Bridge.notify.
+ *
+ * Hardware: Arduino UNO Q + Modulino Motors (Qwiic) + 5–24 V motor supply
+ */
+
+#include <Arduino_RouterBridge.h>
+#include <Arduino_Modulino.h>
+
+ModulinoMotors motors;
+
+// ── Shared state ─────────────────────────────────────────────────
+int  speedA = 0, speedB = 0;         // 0–100 %
+bool invertA = false, invertB = false;
+bool stepperMode = false;
+
+unsigned long last_telemetry_ms = 0;
+const unsigned long TELEMETRY_INTERVAL_MS = 200;
+
+// ── Build the JSON state the browser renders from ────────────────
+#line 34 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-motors-control/sketch/sketch.ino"
+String buildState();
+#line 52 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-motors-control/sketch/sketch.ino"
+String rpc_set_dc(int a, int ia, int b, int ib);
+#line 69 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-motors-control/sketch/sketch.ino"
+String rpc_stop();
+#line 79 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-motors-control/sketch/sketch.ino"
+String rpc_move_stepper(int steps, int rpm);
+#line 88 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-motors-control/sketch/sketch.ino"
+String rpc_set_mode(int stepper);
+#line 98 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-motors-control/sketch/sketch.ino"
+String rpc_get_state();
+#line 100 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-motors-control/sketch/sketch.ino"
+void setup();
+#line 112 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-motors-control/sketch/sketch.ino"
+void loop();
+#line 34 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-motors-control/sketch/sketch.ino"
+String buildState() {
+  motors.update();
+  String s = "{";
+  s += "\"stepperMode\":" + String(stepperMode ? "true" : "false") + ",";
+  s += "\"speedA\":"  + String(speedA)  + ",";
+  s += "\"speedB\":"  + String(speedB)  + ",";
+  s += "\"invertA\":" + String(invertA ? "true" : "false") + ",";
+  s += "\"invertB\":" + String(invertB ? "true" : "false") + ",";
+  s += "\"busy\":"    + String(motors.busy() ? "true" : "false") + ",";
+  s += "\"currentA\":" + String(motors.sensedCurrentA(), 0) + ",";
+  s += "\"currentB\":" + String(motors.sensedCurrentB(), 0);
+  s += "}";
+  return s;
+}
+
+// ── RPC handlers (called by Python via Bridge) ───────────────────
+
+// Set both DC channels. Switches out of stepper mode first.
+String rpc_set_dc(int a, int ia, int b, int ib) {
+  stepperMode = false;
+  motors.setStepperModeEnabled(false);
+
+  speedA  = constrain(a, 0, 100);
+  speedB  = constrain(b, 0, 100);
+  invertA = (ia != 0);
+  invertB = (ib != 0);
+
+  motors.setInvertA(invertA);
+  motors.setInvertB(invertB);
+  motors.setSpeedA((uint8_t)speedA);
+  motors.setSpeedB((uint8_t)speedB);
+  return buildState();
+}
+
+// Stop both DC channels immediately.
+String rpc_stop() {
+  speedA = 0;
+  speedB = 0;
+  motors.setSpeedA(0);
+  motors.setSpeedB(0);
+  motors.stop();
+  return buildState();
+}
+
+// Move the stepper `steps` steps (sign = direction) at `rpm`.
+String rpc_move_stepper(int steps, int rpm) {
+  stepperMode = true;
+  motors.setStepperModeEnabled(true);
+  if (rpm < 1) rpm = 1;
+  motors.moveStepperRpm((int32_t)steps, (float)rpm);
+  return buildState();
+}
+
+// Toggle between DC and stepper mode without moving anything.
+String rpc_set_mode(int stepper) {
+  stepperMode = (stepper != 0);
+  motors.setStepperModeEnabled(stepperMode);
+  if (!stepperMode) {   // leaving stepper mode — make sure DC outputs are off
+    speedA = 0; speedB = 0;
+    motors.setSpeedA(0); motors.setSpeedB(0);
+  }
+  return buildState();
+}
+
+String rpc_get_state() { return buildState(); }
+
+void setup() {
+  Bridge.begin();
+  Modulino.begin();
+  motors.begin();
+
+  Bridge.provide("set_dc",       rpc_set_dc);
+  Bridge.provide("stop",         rpc_stop);
+  Bridge.provide("move_stepper", rpc_move_stepper);
+  Bridge.provide("set_mode",     rpc_set_mode);
+  Bridge.provide("get_state",    rpc_get_state);
+}
+
+void loop() {
+  // Stream live current-sense + busy telemetry so the browser can show it.
+  unsigned long now = millis();
+  if (now - last_telemetry_ms >= TELEMETRY_INTERVAL_MS) {
+    last_telemetry_ms = now;
+    motors.update();
+    Bridge.notify("telemetry",
+                  motors.sensedCurrentA(),
+                  motors.sensedCurrentB(),
+                  (int)motors.busy());
+  }
+}
+

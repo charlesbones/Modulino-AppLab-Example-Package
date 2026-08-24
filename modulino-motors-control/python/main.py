@@ -39,11 +39,15 @@ def _call_mcu(method, *args):
 
 
 # ── MCU → Python: live telemetry ─────────────────────────────────
+# Sent on its own channel (not "state_update") so it never clobbers a
+# speed/invert control the browser hasn't applied yet.
 def on_telemetry(current_a, current_b, busy):
     state["currentA"] = current_a
     state["currentB"] = current_b
     state["busy"] = bool(busy)
-    _broadcast()
+    ui.send_message("telemetry_update", {
+        "currentA": current_a, "currentB": current_b, "busy": bool(busy),
+    })
 
 
 Bridge.provide("telemetry", on_telemetry)

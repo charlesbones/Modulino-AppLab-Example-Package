@@ -74,8 +74,13 @@ def on_start_hue_wheel(sid, data):
     _broadcast_state(state)
 
 def on_start_sweep(sid, data):
-    """Start the bouncing cyan-dot animation on the MCU."""
-    state = _call_mcu("start_sweep")
+    """Start the bouncing-dot animation on the MCU, in the chosen colour."""
+    state = _call_mcu(
+        "start_sweep",
+        int(data.get("r", 0)),
+        int(data.get("g", 200)),
+        int(data.get("b", 255)),
+    )
     _broadcast_state(state)
 
 def on_stop_animation(sid, data):

@@ -1,0 +1,211 @@
+#include <Arduino.h>
+#line 1 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+// SPDX-License-Identifier: MPL-2.0
+// Modulino Pixels Color Studio - MCU Sketch
+//
+// Bridge.provide("name", fn) registers an RPC method Python can call.
+// Bridge runs its own background thread; animations run in loop().
+// `volatile` on anim_mode ensures both threads always read the latest value.
+
+#include <Arduino_RouterBridge.h>
+#include <Arduino_Modulino.h>
+
+// Declared before all functions so the Arduino preprocessor sees it when
+// it auto-generates prototypes (required for structs used as return types).
+struct RgbColor { uint8_t r, g, b; };
+
+ModulinoPixels pixels;
+
+// ── LED state ────────────────────────────────────────────────────────────────
+uint8_t brightness = 25;  // 0-100 (Modulino native range)
+uint8_t led_r[8]   = {0};
+uint8_t led_g[8]   = {0};
+uint8_t led_b[8]   = {0};
+
+// ── Animation state ──────────────────────────────────────────────────────────
+volatile int anim_mode = 0; // 0 = off, 1 = hue wheel, 2 = sweep
+
+uint8_t       hue_offset = 0;
+int           sweep_pos  = 0;
+int           sweep_dir  = 1;
+unsigned long last_anim_ms = 0;
+
+// Sweep dot colour, defaults to the original cyan.
+uint8_t sweep_r = 0;
+uint8_t sweep_g = 200;
+uint8_t sweep_b = 255;
+
+const unsigned long HUE_STEP_MS   = 50;  // ~20 fps
+const unsigned long SWEEP_STEP_MS = 120;
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+// Push the led_* arrays to the hardware.
+#line 42 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+void applyAll();
+#line 50 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+String buildState();
+#line 65 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+RgbColor hueToRgb(uint8_t hue);
+#line 78 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+void stepHueWheel();
+#line 89 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+void stepSweep();
+#line 105 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+String rpc_set_pixel(int index, int r, int g, int b, int bright);
+#line 116 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+String rpc_set_all(int r, int g, int b, int bright);
+#line 128 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+String rpc_set_brightness(int bright);
+#line 134 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+String rpc_get_state();
+#line 136 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+String rpc_start_hue_wheel();
+#line 141 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+String rpc_start_sweep(int r, int g, int b);
+#line 149 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+String rpc_stop_animation();
+#line 157 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+void setup();
+#line 172 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+void loop();
+#line 42 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-pixels-color-studio/sketch/sketch.ino"
+void applyAll() {
+  for (int i = 0; i < 8; i++) {
+    pixels.set(i, ModulinoColor(led_r[i], led_g[i], led_b[i]), brightness);
+  }
+  pixels.show();
+}
+
+// Serialize current state to JSON for Python to forward to the browser.
+String buildState() {
+  String s = "{\"brightness\":" + String(brightness) + ",\"animation\":\"";
+  if      (anim_mode == 1) s += "hue_wheel";
+  else if (anim_mode == 2) s += "sweep";
+  else                     s += "none";
+  s += "\",\"pixels\":[";
+  for (int i = 0; i < 8; i++) {
+    if (i > 0) s += ",";
+    s += "{\"r\":" + String(led_r[i]) + ",\"g\":" + String(led_g[i]) + ",\"b\":" + String(led_b[i]) + "}";
+  }
+  return s + "]}";
+}
+
+// Convert a hue angle (0-255) to RGB. The wheel has 6 sectors of ~43 steps:
+//   0=red  43=yellow  85=green  128=cyan  170=blue  213=magenta
+RgbColor hueToRgb(uint8_t hue) {
+  RgbColor c = {0, 0, 0};
+  if      (hue < 43)  { c.r = 255;            c.g = hue * 6;         }
+  else if (hue < 85)  { c.r = (85 - hue) * 6; c.g = 255;            }
+  else if (hue < 128) {                        c.g = 255;             c.b = (hue - 85) * 6;  }
+  else if (hue < 170) {                        c.g = (170 - hue) * 6; c.b = 255;             }
+  else if (hue < 213) { c.r = (hue - 170) * 6;                        c.b = 255;             }
+  else                { c.r = 255;                                     c.b = (255 - hue) * 6; }
+  return c;
+}
+
+// ── Animation frames ─────────────────────────────────────────────────────────
+
+void stepHueWheel() {
+  for (int i = 0; i < 8; i++) {
+    // Spread 8 LEDs evenly across the 256-step hue wheel (32 steps apart).
+    RgbColor c = hueToRgb(hue_offset + (uint8_t)(i * 32));
+    led_r[i] = c.r; led_g[i] = c.g; led_b[i] = c.b;
+    pixels.set(i, ModulinoColor(c.r, c.g, c.b), brightness);
+  }
+  pixels.show();
+  hue_offset += 3; // wraps automatically at 256
+}
+
+void stepSweep() {
+  for (int i = 0; i < 8; i++) {
+    led_r[i] = 0; led_g[i] = 0; led_b[i] = 0;
+    pixels.set(i, ModulinoColor(0, 0, 0), 0);
+  }
+  led_r[sweep_pos] = sweep_r; led_g[sweep_pos] = sweep_g; led_b[sweep_pos] = sweep_b;
+  pixels.set(sweep_pos, ModulinoColor(sweep_r, sweep_g, sweep_b), brightness);
+  pixels.show();
+
+  sweep_pos += sweep_dir;
+  if (sweep_pos > 7) { sweep_pos = 6; sweep_dir = -1; }
+  if (sweep_pos < 0) { sweep_pos = 1; sweep_dir =  1; }
+}
+
+// ── RPC handlers (called by Python via Bridge) ────────────────────────────────
+
+String rpc_set_pixel(int index, int r, int g, int b, int bright) {
+  if (index < 0 || index > 7) return "{\"error\":\"index must be 0-7\"}";
+  anim_mode    = 0;
+  brightness   = constrain(bright, 0, 100);
+  led_r[index] = constrain(r, 0, 255);
+  led_g[index] = constrain(g, 0, 255);
+  led_b[index] = constrain(b, 0, 255);
+  applyAll();
+  return buildState();
+}
+
+String rpc_set_all(int r, int g, int b, int bright) {
+  anim_mode  = 0;
+  brightness = constrain(bright, 0, 100);
+  for (int i = 0; i < 8; i++) {
+    led_r[i] = constrain(r, 0, 255);
+    led_g[i] = constrain(g, 0, 255);
+    led_b[i] = constrain(b, 0, 255);
+  }
+  applyAll();
+  return buildState();
+}
+
+String rpc_set_brightness(int bright) {
+  brightness = constrain(bright, 0, 100);
+  applyAll();
+  return buildState();
+}
+
+String rpc_get_state() { return buildState(); }
+
+String rpc_start_hue_wheel() {
+  hue_offset = 0; last_anim_ms = 0; anim_mode = 1;
+  return buildState();
+}
+
+String rpc_start_sweep(int r, int g, int b) {
+  sweep_r = constrain(r, 0, 255);
+  sweep_g = constrain(g, 0, 255);
+  sweep_b = constrain(b, 0, 255);
+  sweep_pos = 0; sweep_dir = 1; last_anim_ms = 0; anim_mode = 2;
+  return buildState();
+}
+
+String rpc_stop_animation() {
+  anim_mode = 0;
+  applyAll();
+  return buildState();
+}
+
+// ── Arduino entry points ──────────────────────────────────────────────────────
+
+void setup() {
+  Bridge.begin();   // Connect to the Python app via serial bridge
+  Modulino.begin(); // Start the Modulino I2C bus
+  pixels.begin();   // Connect to the Pixels module
+  applyAll();       // Start with all LEDs off
+
+  Bridge.provide("set_pixel",       rpc_set_pixel);
+  Bridge.provide("set_all",         rpc_set_all);
+  Bridge.provide("set_brightness",  rpc_set_brightness);
+  Bridge.provide("get_state",       rpc_get_state);
+  Bridge.provide("start_hue_wheel", rpc_start_hue_wheel);
+  Bridge.provide("start_sweep",     rpc_start_sweep);
+  Bridge.provide("stop_animation",  rpc_stop_animation);
+}
+
+void loop() {
+  if (anim_mode == 0) return; // Bridge handles RPC calls in its own thread
+
+  unsigned long now = millis();
+  if (anim_mode == 1 && now - last_anim_ms >= HUE_STEP_MS)   { last_anim_ms = now; stepHueWheel(); }
+  if (anim_mode == 2 && now - last_anim_ms >= SWEEP_STEP_MS) { last_anim_ms = now; stepSweep();    }
+}
+
+

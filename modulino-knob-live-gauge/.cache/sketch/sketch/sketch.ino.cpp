@@ -1,0 +1,95 @@
+#include <Arduino.h>
+#line 1 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-knob-live-gauge/sketch/sketch.ino"
+// SPDX-FileCopyrightText: Copyright (C) Arduino s.r.l. and/or its affiliated companies
+//
+// SPDX-License-Identifier: MPL-2.0
+
+/*
+ * Modulino Knob — Live Gauge
+ *
+ * Streams the rotary encoder value (clamped to 0–100) to Python via
+ * Bridge.notify("knob_update"). The push-button is handled with the
+ * Button2 library so it reports rich events — press, release, and
+ * double-tap — exactly like the Modulino Buttons and Joystick examples.
+ * A double-tap (or the browser Reset button) sets the encoder back to 0.
+ *
+ * Hardware: Arduino UNO Q + Modulino Knob (Qwiic)
+ */
+
+#include <Arduino_RouterBridge.h>
+#include <Arduino_Modulino.h>
+#include <Button2.h>
+
+// ── Modulino + Button2 objects ───────────────────────────────────
+ModulinoKnob knob;
+Button2 btn;
+
+// ── Last-known value, so we only notify on change ────────────────
+int lastValue = 0;
+
+// ── Button2 state function: reads the knob's push-button ─────────
+// Returns LOW when pressed, HIGH when released (pull-up convention).
+#line 30 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-knob-live-gauge/sketch/sketch.ino"
+uint8_t knobBtnState();
+#line 35 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-knob-live-gauge/sketch/sketch.ino"
+bool resetKnob();
+#line 43 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-knob-live-gauge/sketch/sketch.ino"
+void onPress(Button2& b);
+#line 44 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-knob-live-gauge/sketch/sketch.ino"
+void onRelease(Button2& b);
+#line 46 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-knob-live-gauge/sketch/sketch.ino"
+void onDoubleClick(Button2& b);
+#line 51 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-knob-live-gauge/sketch/sketch.ino"
+void setup();
+#line 67 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-knob-live-gauge/sketch/sketch.ino"
+void loop();
+#line 30 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-knob-live-gauge/sketch/sketch.ino"
+uint8_t knobBtnState() {
+  return knob.isPressed() ? LOW : HIGH;
+}
+
+// ── RPC: reset the encoder to zero (called from the browser) ─────
+bool resetKnob() {
+  knob.set(0);
+  lastValue = 0;
+  Bridge.notify("knob_update", 0);
+  return true;
+}
+
+// ── Button2 event handlers ───────────────────────────────────────
+void onPress(Button2& b)   { Bridge.notify("button_event", "press"); }
+void onRelease(Button2& b) { Bridge.notify("button_event", "release"); }
+
+void onDoubleClick(Button2& b) {
+  Bridge.notify("button_event", "double_tap");
+  resetKnob();   // double-tap resets the gauge to zero
+}
+
+void setup() {
+  Bridge.begin();
+  Modulino.begin();
+  knob.begin();
+  knob.set(0);   // start the encoder at zero
+
+  btn.setDebounceTime(35);
+  btn.setButtonStateFunction(knobBtnState);
+  btn.setPressedHandler(onPress);
+  btn.setReleasedHandler(onRelease);
+  btn.setDoubleClickHandler(onDoubleClick);
+  btn.begin(BTN_VIRTUAL_PIN);
+
+  Bridge.provide("reset_knob", resetKnob);
+}
+
+void loop() {
+  // Button2 drives the push-button state machine.
+  btn.loop();
+
+  // Stream the encoder value only when it changes (clamped to 0–100).
+  int value = constrain(knob.get(), 0, 100);
+  if (value != lastValue) {
+    lastValue = value;
+    Bridge.notify("knob_update", value);
+  }
+}
+

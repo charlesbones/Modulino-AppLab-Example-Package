@@ -1,17 +1,11 @@
 profiles:
   default:
-    fqbn:
+    fqbn: 
     platforms:
       - platform: arduino:zephyr
     libraries:
-      - Arduino_RouterBridge (0.4.1)
       - dependency: Arduino_RPClite (0.2.1)
-      - dependency: ArxContainer (0.7.0)
-      - dependency: ArxTypeTraits (0.3.2)
-      - dependency: DebugLog (0.8.4)
-      - dependency: MsgPack (0.4.2)
       - dependency: ArduinoGraphics (1.1.5)
-      # ── All sensor deps must come BEFORE Arduino_Modulino ──────────────────
       - dependency: Arduino_HS300x (1.0.0)
       - dependency: Arduino_LPS22HB (1.0.2)
       - dependency: Arduino_LSM6DSOX (1.1.2)

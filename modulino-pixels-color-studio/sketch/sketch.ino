@@ -28,6 +28,11 @@ int           sweep_pos  = 0;
 int           sweep_dir  = 1;
 unsigned long last_anim_ms = 0;
 
+// Sweep dot colour, defaults to the original cyan.
+uint8_t sweep_r = 0;
+uint8_t sweep_g = 200;
+uint8_t sweep_b = 255;
+
 const unsigned long HUE_STEP_MS   = 50;  // ~20 fps
 const unsigned long SWEEP_STEP_MS = 120;
 
@@ -86,8 +91,8 @@ void stepSweep() {
     led_r[i] = 0; led_g[i] = 0; led_b[i] = 0;
     pixels.set(i, ModulinoColor(0, 0, 0), 0);
   }
-  led_g[sweep_pos] = 200; led_b[sweep_pos] = 255;
-  pixels.set(sweep_pos, ModulinoColor(0, 200, 255), brightness);
+  led_r[sweep_pos] = sweep_r; led_g[sweep_pos] = sweep_g; led_b[sweep_pos] = sweep_b;
+  pixels.set(sweep_pos, ModulinoColor(sweep_r, sweep_g, sweep_b), brightness);
   pixels.show();
 
   sweep_pos += sweep_dir;
@@ -133,7 +138,10 @@ String rpc_start_hue_wheel() {
   return buildState();
 }
 
-String rpc_start_sweep() {
+String rpc_start_sweep(int r, int g, int b) {
+  sweep_r = constrain(r, 0, 255);
+  sweep_g = constrain(g, 0, 255);
+  sweep_b = constrain(b, 0, 255);
   sweep_pos = 0; sweep_dir = 1; last_anim_ms = 0; anim_mode = 2;
   return buildState();
 }

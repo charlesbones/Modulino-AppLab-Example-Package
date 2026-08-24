@@ -37,7 +37,6 @@ static String fixedAddrToName(uint8_t addr) {
 static String pinstrapToName(uint8_t pinstrap) {
   switch (pinstrap) {
     case 0x04: return "Latch Relay";
-    case 0x28: return "Opto Relay";
     case 0x3C: return "Buzzer";
     case 0x58: return "Joystick";
     case 0x6C: return "Pixels";

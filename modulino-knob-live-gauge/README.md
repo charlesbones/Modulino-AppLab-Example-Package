@@ -19,6 +19,10 @@ Three pieces talk to each other in a chain:
 2. **Python app** (`python/main.py`): receives both `knob_update` and `button_event` via `Bridge.provide`, keeps a shared state dict (value, pressed, per-event counters), and broadcasts `state_update` to all connected browsers over Socket.IO. It forwards the browser's `reset` message to the `reset_knob` RPC.
 3. **Browser UI** (`assets/`): draws an SVG arc gauge and per-event counters, updating inside `applyState()` on every `state_update` — no polling, no optimistic updates.
 
+### How this differs from Vibro and Pixels
+
+All three Modulino examples share the same baseline `sketch/sketch.yaml` (RPClite, ArduinoGraphics, the sensor libraries, Arduino_Modulino). The Knob example adds one extra dependency, **Button2 (2.5.0)**, that Vibro and Pixels don't need: Vibro and Pixels only drive an actuator (motor / LEDs) and never read a button, while the Knob module has an onboard push-button that needs debouncing and press/release/double-tap detection — exactly what Button2 provides. That's also why `sketch.ino` here has a `btn.loop()` call and three Button2 handlers that have no equivalent in the other two sketches.
+
 ---
 
 ## Features

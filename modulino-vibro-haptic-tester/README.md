@@ -17,14 +17,14 @@ Three pieces talk to each other in a chain:
 
 1. **Arduino sketch** (`sketch/sketch.ino`): exposes three Bridge RPC methods — `buzz` (fires the motor at a given power and duration), `stop_buzz` (cuts the motor immediately), and `get_state` (returns the last-used settings). All calls return a JSON state object; no `delay()` is ever used.
 2. **Python app** (`python/main.py`): maintains a shared state dict, forwards browser events to the MCU via Bridge RPC, and broadcasts the returned state to every connected browser over Socket.IO.
-3. **Browser UI** (`assets/`): renders a power selector, a duration slider, and Buzz / Stop buttons. All display updates happen inside `applyState()` in response to `state_update` events — the UI never updates optimistically.
+3. **Browser UI** (`assets/`): renders a power selector (button grid plus a synced slider with a numeric readout), a duration slider, and Buzz / Stop buttons. All display updates happen inside `applyState()` in response to `state_update` events — the UI never updates optimistically.
 
 ---
 
 ## Features
 
 ### Six power levels
-Choose from Gentle, Moderate, Medium, Intense, Powerful, or Maximum using the highlighted button grid. The active selection is kept in sync with the server state so every browser tab shows the same choice.
+Choose from Gentle, Moderate, Medium, Intense, Powerful, or Maximum using the highlighted button grid, or drag the paired slider — its readout shows the raw numeric power level (25–50) instead of the word label. Both controls stay in sync with each other and with the server state, so every browser tab shows the same choice.
 
 ### Adjustable duration
 A slider (50 ms – 2000 ms, 50 ms steps) lets you dial in exactly how long the motor runs. The numeric readout updates live as you drag.
@@ -43,7 +43,7 @@ A small summary line shows the duration and power label of the most recent buzz,
 modulino-vibro-haptic-tester/
 ├── app.yaml
 ├── assets/
-│   ├── index.html        # Layout: power grid, duration slider, action buttons, last-triggered
+│   ├── index.html        # Layout: power grid + slider, duration slider, action buttons, last-triggered
 │   ├── style.css        # Dark-theme design tokens and component styles
 │   ├── app.js            # Socket.IO client, applyState(), button/slider event wiring
 │   └── libs/          # socket.io.min.js + arduino.js

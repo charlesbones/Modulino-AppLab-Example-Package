@@ -84,6 +84,18 @@ h1 {
 .anim-btn:hover   { opacity: 0.8; }
 .anim-btn.stop    { color: var(--red); border-color: var(--red); }
 
+.anim-color {
+  width: 2.5rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.anim-color:disabled { opacity: 0.4; cursor: not-allowed; }
+
 /* ── Brightness slider ───────────────────────────────────────────────────── */
 .brightness-row {
   display: flex;

@@ -36,7 +36,7 @@ A global slider (0–100) controls brightness without changing any colors.
 
 ### Animations
 - **Hue Wheel** — all 8 LEDs spin through the color wheel together (~20 fps).
-- **Sweep** — a single cyan dot bounces back and forth across the strip.
+- **Sweep** — a single dot bounces back and forth across the strip, in a color you pick (defaults to cyan). Changing the color while the sweep is running restarts it in the new color.
 
 While an animation is running, the individual color pickers are disabled. Click **Stop** to go back to manual control.
 
@@ -73,7 +73,7 @@ The Python app calls these commands on the sketch. Each one returns the full cur
 | `set_all` | `r, g, b, brightness` | Sets all 8 LEDs to the same color |
 | `set_brightness` | `brightness` | Changes brightness (0–100) without touching colors |
 | `start_hue_wheel` | — | Starts the rainbow animation |
-| `start_sweep` | — | Starts the bouncing sweep animation |
+| `start_sweep` | `r, g, b` | Starts (or restarts) the bouncing sweep animation in the given color |
 | `stop_animation` | — | Stops the animation and freezes the LEDs |
 
 ---

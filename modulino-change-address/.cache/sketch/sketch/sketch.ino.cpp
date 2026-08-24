@@ -1,0 +1,172 @@
+#include <Arduino.h>
+#line 1 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-change-address/sketch/sketch.ino"
+/*
+ * Modulino — Address Changer (Web UI edition)
+ *
+ * Scans the I²C bus, reports discovered Modulino devices to Python via
+ * Bridge, and handles address-change commands from the Web UI.
+ *
+ * Copyright (c) 2025 Arduino
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+#include <Arduino_RouterBridge.h>
+#include "Wire.h"
+
+// ── Fixed-address devices (no MCU — address cannot be changed) ───────────────
+static const uint8_t FIXED_ADDRS[] = { 0x29, 0x44, 0x53, 0x6A, 0x6B };
+static const int NUM_FIXED = (int)(sizeof(FIXED_ADDRS) / sizeof(FIXED_ADDRS[0]));
+
+#line 18 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-change-address/sketch/sketch.ino"
+static bool isFixedAddr(uint8_t addr);
+#line 24 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-change-address/sketch/sketch.ino"
+static String fixedAddrToName(uint8_t addr);
+#line 37 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-change-address/sketch/sketch.ino"
+static String pinstrapToName(uint8_t pinstrap);
+#line 54 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-change-address/sketch/sketch.ino"
+static void discoverDevices();
+#line 94 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-change-address/sketch/sketch.ino"
+bool change_address(int curAddr, int newAddr);
+#line 137 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-change-address/sketch/sketch.ino"
+bool rescan();
+#line 143 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-change-address/sketch/sketch.ino"
+void setup();
+#line 152 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-change-address/sketch/sketch.ino"
+void loop();
+#line 18 "/home/arduino/ArduinoApps/Modulino-AppLab-example-pacakge/modulino-change-address/sketch/sketch.ino"
+static bool isFixedAddr(uint8_t addr) {
+  for (int i = 0; i < NUM_FIXED; i++)
+    if (FIXED_ADDRS[i] == addr) return true;
+  return false;
+}
+
+static String fixedAddrToName(uint8_t addr) {
+  switch (addr) {
+    case 0x29: return "Distance";
+    case 0x44: return "Thermo";
+    case 0x53: return "Light";
+    case 0x6A:
+    case 0x6B: return "Movement";
+    default:   return "Unknown";
+  }
+}
+
+// Pinstrap is the byte read from register 0x00 of a configurable device.
+// Default I²C address = pinstrap / 2.
+static String pinstrapToName(uint8_t pinstrap) {
+  switch (pinstrap) {
+    case 0x04: return "Latch Relay";
+    case 0x28: return "Opto Relay";
+    case 0x3C: return "Buzzer";
+    case 0x58: return "Joystick";
+    case 0x6C: return "Pixels";
+    case 0x70: return "Vibro";
+    case 0x74: return "Knob";
+    case 0x76: return "Knob";
+    case 0x72: return "LED Matrix";
+    case 0x7C: return "Buttons";
+    default:   return "Unknown";
+  }
+}
+
+// ── I²C scan ─────────────────────────────────────────────────────────────────
+static void discoverDevices() {
+  Bridge.notify("scan_start");
+
+  for (int addr = 8; addr <= 0x77; addr++) {
+    Wire1.beginTransmission(addr);
+    if (Wire1.endTransmission() != 0) continue;
+
+    if (isFixedAddr((uint8_t)addr)) {
+      // Fixed device: pinstrap = -1, defaultAddr = addr, configurable = 0
+      Bridge.notify("device_found", addr, fixedAddrToName((uint8_t)addr), -1, addr, 0);
+      continue;
+    }
+
+    // Configurable device: read pinstrap from register 0x00
+    Wire1.beginTransmission(addr);
+    Wire1.write(0x00);
+    Wire1.endTransmission();
+    delay(50);
+
+    Wire1.requestFrom(addr, 1);
+    if (Wire1.available()) {
+      uint8_t pinstrap = Wire1.read();
+      while (Wire1.available()) Wire1.read(); // drain
+      int defAddr = (int)(pinstrap / 2);
+      Bridge.notify("device_found", addr, pinstrapToName(pinstrap), (int)pinstrap, defAddr, 1);
+    } else {
+      if (addr < 0x78) {
+        Bridge.notify("device_found", addr, String("Unknown"), 0, addr, 1);
+      }
+    }
+  }
+
+  Bridge.notify("scan_complete");
+}
+
+// ── RPCs (called by Python via Bridge) ───────────────────────────────────────
+
+// Change the I²C address of the device at curAddr to newAddr.
+//   curAddr = 0  → broadcast to all devices
+//   newAddr = 0  → reset to default pinstrap address
+bool change_address(int curAddr, int newAddr) {
+  // Validate new address (0 is special: means "reset to default")
+  if (newAddr != 0 && (newAddr < 8 || newAddr > 0x77)) {
+    Bridge.notify("change_result", 0, curAddr, newAddr,
+                  String("Invalid address — must be 0x08–0x77 or 0 (reset to default)"));
+    return false;
+  }
+
+  // Fixed-address devices cannot be reconfigured
+  if (curAddr != 0 && isFixedAddr((uint8_t)curAddr)) {
+    Bridge.notify("change_result", 0, curAddr, newAddr,
+                  String("This device has a fixed address and cannot be changed"));
+    return false;
+  }
+
+  // Send the 'C','F',newAddr*2 command packet
+  uint8_t data[48] = { 'C', 'F', (uint8_t)(newAddr * 2) };
+  memset(data + 3, 0, sizeof(data) - 3);
+
+  Wire1.beginTransmission((uint8_t)curAddr);
+  Wire1.write(data, 40);
+  Wire1.endTransmission();
+
+  delay(500);
+
+  bool ok;
+  if (newAddr == 0 || curAddr == 0) {
+    // Cannot verify: target address is unknown (default) or broadcast was used
+    ok = true;
+  } else {
+    Wire1.requestFrom(newAddr, 1);
+    ok = Wire1.available() > 0;
+    while (Wire1.available()) Wire1.read();
+  }
+
+  Bridge.notify("change_result", ok ? 1 : 0, curAddr, newAddr,
+                ok ? String("OK") : String("No response at new address — change may have failed"));
+
+  // Always re-scan so Python gets the updated device list
+  discoverDevices();
+  return ok;
+}
+
+bool rescan() {
+  discoverDevices();
+  return true;
+}
+
+// ── Setup / Loop ─────────────────────────────────────────────────────────────
+void setup() {
+  Wire1.begin();
+  Bridge.begin();
+  Bridge.provide_safe("change_address", change_address);
+  Bridge.provide_safe("rescan",         rescan);
+  delay(600); // give Python time to register Bridge handlers before first scan
+  discoverDevices();
+}
+
+void loop() {}
+
