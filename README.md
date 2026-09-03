@@ -15,7 +15,7 @@ Open any example in App Lab, plug in the matching Modulino node, hit **Run**, an
 
 ## Getting started
 
-1. Clone the repo inside the ArduinoApss folder or download the latest release and import one by one each example.
+1. Clone the repo inside the ArduinoApss folder inside the UNO Q or download the latest release and import one by one each example using AppLab.
 2. Wire the Modulino module you want to try to the UNO Q via the Qwiic cable.
 3. Start the app, this uploads the sketch and launches the Python app.
 4. Open the app's web UI in your browser and interact with the module.
