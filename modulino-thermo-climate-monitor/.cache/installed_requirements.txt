@@ -1,0 +1,2 @@
+# Arduino App Lab bricks are pre-installed in the runtime environment.
+# No extra packages needed beyond what App Lab provides.
