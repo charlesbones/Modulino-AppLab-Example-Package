@@ -102,11 +102,11 @@ void setup() {
   Modulino.begin();
   motors.begin();
 
-  Bridge.provide("set_dc",       rpc_set_dc);
-  Bridge.provide("stop",         rpc_stop);
-  Bridge.provide("move_stepper", rpc_move_stepper);
-  Bridge.provide("set_mode",     rpc_set_mode);
-  Bridge.provide("get_state",    rpc_get_state);
+  Bridge.provide_safe("set_dc",       rpc_set_dc);
+  Bridge.provide_safe("stop",         rpc_stop);
+  Bridge.provide_safe("move_stepper", rpc_move_stepper);
+  Bridge.provide_safe("set_mode",     rpc_set_mode);
+  Bridge.provide_safe("get_state",    rpc_get_state);
 }
 
 void loop() {

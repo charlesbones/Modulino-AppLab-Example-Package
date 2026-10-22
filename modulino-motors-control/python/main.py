@@ -28,12 +28,12 @@ def _broadcast(room=None):
     ui.send_message("state_update", state, room=room)
 
 
-def _call_mcu(method, *args):
+def _call_mcu(method, *args, room=None):
     """Call a sketch RPC that returns full JSON state, then broadcast it."""
     try:
         new_state = json.loads(Bridge.call(method, *args))
         state.update(new_state)
-        _broadcast()
+        _broadcast(room=room)
     except Exception as exc:
         print(f"[bridge] {method} error: {exc}")
 
@@ -55,8 +55,7 @@ Bridge.provide("telemetry", on_telemetry)
 
 # ── Browser → Python ─────────────────────────────────────────────
 def on_connect(sid):
-    _call_mcu("get_state")
-    _broadcast(room=sid)
+    _call_mcu("get_state", room=sid)
 
 
 def on_set_dc(sid, data):

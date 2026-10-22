@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Modulino Pixels Color Studio - MCU Sketch
 //
-// Bridge.provide("name", fn) registers an RPC method Python can call.
-// Bridge runs its own background thread; animations run in loop().
-// `volatile` on anim_mode ensures both threads always read the latest value.
+// Bridge.provide_safe("name", fn) registers an RPC method Python can call;
+// it runs in the main loop context, so RPCs never race the animations in loop().
 
 #include <Arduino_RouterBridge.h>
 #include <Arduino_Modulino.h>
@@ -160,17 +159,17 @@ void setup() {
   pixels.begin();   // Connect to the Pixels module
   applyAll();       // Start with all LEDs off
 
-  Bridge.provide("set_pixel",       rpc_set_pixel);
-  Bridge.provide("set_all",         rpc_set_all);
-  Bridge.provide("set_brightness",  rpc_set_brightness);
-  Bridge.provide("get_state",       rpc_get_state);
-  Bridge.provide("start_hue_wheel", rpc_start_hue_wheel);
-  Bridge.provide("start_sweep",     rpc_start_sweep);
-  Bridge.provide("stop_animation",  rpc_stop_animation);
+  Bridge.provide_safe("set_pixel",       rpc_set_pixel);
+  Bridge.provide_safe("set_all",         rpc_set_all);
+  Bridge.provide_safe("set_brightness",  rpc_set_brightness);
+  Bridge.provide_safe("get_state",       rpc_get_state);
+  Bridge.provide_safe("start_hue_wheel", rpc_start_hue_wheel);
+  Bridge.provide_safe("start_sweep",     rpc_start_sweep);
+  Bridge.provide_safe("stop_animation",  rpc_stop_animation);
 }
 
 void loop() {
-  if (anim_mode == 0) return; // Bridge handles RPC calls in its own thread
+  if (anim_mode == 0) return;
 
   unsigned long now = millis();
   if (anim_mode == 1 && now - last_anim_ms >= HUE_STEP_MS)   { last_anim_ms = now; stepHueWheel(); }

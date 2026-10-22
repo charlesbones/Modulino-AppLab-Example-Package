@@ -91,7 +91,7 @@ void setup() {
   }
 
   // Expose "set_led" so Python can call it from the Web UI
-  Bridge.provide("set_led", rpc_set_led);
+  Bridge.provide_safe("set_led", rpc_set_led);
 }
 
 void loop() {

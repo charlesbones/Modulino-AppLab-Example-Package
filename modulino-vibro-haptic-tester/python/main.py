@@ -11,15 +11,6 @@ ui = WebUI()
 
 state = {"last_duration_ms": 500, "last_power": 50}
 
-POWER_LABELS = {
-    25: "Gentle",
-    30: "Moderate",
-    35: "Medium",
-    40: "Intense",
-    45: "Powerful",
-    50: "Maximum",
-}
-
 def _call_mcu(method, *args):
     try:
         return json.loads(Bridge.call(method, *args))

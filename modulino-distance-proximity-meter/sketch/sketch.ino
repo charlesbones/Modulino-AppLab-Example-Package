@@ -26,7 +26,7 @@ void setup() {
   Modulino.begin();
   distance.begin();
 
-  Bridge.provide("get_state", rpc_get_state);
+  Bridge.provide_safe("get_state", rpc_get_state);
 }
 
 void loop() {
