@@ -1,0 +1,62 @@
+# Checks daily for a new Arduino_Modulino release. When one appears, pins it
+# (plus its dependencies) in every sketch.yaml, commits to main, and publishes
+# a new package release (v0.N+1) in the same layout as v0.1.
+name: Release on new Arduino_Modulino
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      force_release:
+        description: Publish a release even if the Modulino version did not change
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency: modulino-release
+
+jobs:
+  bump-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Test bump script
+        working-directory: .github/scripts
+        run: python3 test_bump_modulino.py
+
+      - name: Pin latest Arduino_Modulino
+        id: bump
+        run: python3 .github/scripts/bump_modulino.py
+
+      - name: Commit
+        id: commit
+        run: |
+          if git diff --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898208+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Bump Arduino_Modulino to ${{ steps.bump.outputs.version }}"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Build and publish release
+        if: steps.commit.outputs.changed == 'true' || inputs.force_release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MODULINO: ${{ steps.bump.outputs.version }}
+        run: |
+          last=$(git tag -l 'v0.*' --sort=-v:refname | head -1)
+          tag="v0.$(( ${last#v0.} + 1 ))"
+          name="Modulino-AppLab-example-package-$tag"
+          mkdir -p "dist/$name"
+          for d in modulino-*/; do d=${d%/}; zip -qr "dist/$name/$d.zip" "$d"; done
+          (cd dist && zip -qr "$name.zip" "$name")
+          gh release create "$tag" "dist/$name.zip" \
+            --target "$(git rev-parse HEAD)" \
+            --title "Modulino AppLab example package $tag" \
+            --notes "Built against Arduino_Modulino $MODULINO ([changelog](https://github.com/arduino-libraries/Arduino_Modulino/releases/tag/$MODULINO)). Untested on hardware: automated release."
