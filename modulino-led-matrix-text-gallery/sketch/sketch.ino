@@ -35,9 +35,12 @@ int scroll_x = 12;  // current horizontal scroll offset; 12 = just off-screen ri
 // ────────────────────────────────────────────────────────────────────────────
 
 String buildState() {
+  String text = scroll_text_val;  // escape so quotes/backslashes keep the JSON valid
+  text.replace("\\", "\\\\");
+  text.replace("\"", "\\\"");
   String json = "{\"mode\": " + String(anim_mode) +
                 ", \"selected\": " + String(selected_item) +
-                ", \"text\": \"" + scroll_text_val + "\"}";
+                ", \"text\": \"" + text + "\"}";
   return json;
 }
 
@@ -112,7 +115,7 @@ void showIcon(int idx) {
 // 4. Add a new case to showIcon() (before the closing brace):
 //      case 14: showUInt8Icon(MY_ICON); break;
 //
-// 5. Add the icon label to the ICONS array in ui/app.js so the button appears:
+// 5. Add the icon label to the ICONS array in assets/app.js so the button appears:
 //      var ICONS = [ "Bluetooth", ..., "UNO", "My Icon" ];
 //      (the array must have exactly NUM_ICONS entries)
 //
@@ -232,17 +235,15 @@ void setup() {
   matrix.begin();
   matrix.textFont(Font_5x7);  // required for text() to render characters
 
-  Bridge.provide("get_state",  rpc_get_state);
-  Bridge.provide("show_item",  rpc_show_item);
-  Bridge.provide("text_op",    rpc_text_op);
-  Bridge.provide("stop",       rpc_stop);
+  Bridge.provide_safe("get_state",  rpc_get_state);
+  Bridge.provide_safe("show_item",  rpc_show_item);
+  Bridge.provide_safe("text_op",    rpc_text_op);
+  Bridge.provide_safe("stop",       rpc_stop);
 
   // ── Canvas integration ────────────────────────────────────────────────────
-  // Adding pixel-drawing increases the provide count beyond 4. To stay within
-  // the Bridge limit, remove one of the existing RPCs or split into two
-  // sketches (as in the modulino-led-matrix-pixel-canvas project).
-  //   Bridge.provide("toggle_pixel", rpc_toggle_pixel);
-  //   Bridge.provide("clear_canvas", rpc_clear_canvas);
+  // To add pixel-drawing, also register the canvas RPCs:
+  //   Bridge.provide_safe("toggle_pixel", rpc_toggle_pixel);
+  //   Bridge.provide_safe("clear_canvas", rpc_clear_canvas);
   // ─────────────────────────────────────────────────────────────────────────
 }
 

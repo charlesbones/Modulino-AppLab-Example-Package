@@ -8,9 +8,6 @@ from arduino.app_utils import App, Bridge
 from arduino.app_bricks.web_ui import WebUI
 
 # ── Web UI setup ─────────────────────────────────────────────────────────────
-# Serve static files from the python/ui/ folder next to this script.
-# os.path.abspath(__file__) gives the full path of main.py, and
-# os.path.dirname(...) strips the filename to get the folder path.
 ui = WebUI()
 
 # ── Bridge helper ─────────────────────────────────────────────────────────────

@@ -50,8 +50,13 @@ def on_toggle_led(sid, data):
     """Flip the LED at the given index and apply it to the hardware."""
     idx = int(data.get("index", -1))
     if 0 <= idx <= 2:
-        state["leds"][idx] = not state["leds"][idx]
-        Bridge.call("set_led", idx, 1 if state["leds"][idx] else 0)
+        on = not state["leds"][idx]
+        try:
+            Bridge.call("set_led", idx, 1 if on else 0)
+        except Exception as exc:
+            print(f"[bridge] set_led error: {exc}")
+            return
+        state["leds"][idx] = on  # only after the hardware confirmed
         _broadcast()
 
 # ── Register handlers ─────────────────────────────────────────────────────────

@@ -61,7 +61,7 @@ void setup() {
   btn.setDoubleClickHandler(onDoubleClick);
   btn.begin(BTN_VIRTUAL_PIN);
 
-  Bridge.provide("reset_knob", resetKnob);
+  Bridge.provide_safe("reset_knob", resetKnob);
 }
 
 void loop() {

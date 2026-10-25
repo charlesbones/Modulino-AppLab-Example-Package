@@ -76,9 +76,8 @@ static void discoverDevices() {
       int defAddr = (int)(pinstrap / 2);
       Bridge.notify("device_found", addr, pinstrapToName(pinstrap), (int)pinstrap, defAddr, 1);
     } else {
-      if (addr < 0x78) {
-        Bridge.notify("device_found", addr, String("Unknown"), 0, addr, 1);
-      }
+      // No pinstrap byte: report -1 so Python doesn't treat 0x00 as its default address
+      Bridge.notify("device_found", addr, String("Unknown"), -1, addr, 1);
     }
   }
 

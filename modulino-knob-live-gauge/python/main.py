@@ -54,7 +54,10 @@ def on_connect(sid):
 
 
 def on_reset(sid, data):
-    Bridge.call("reset_knob")
+    try:
+        Bridge.call("reset_knob")
+    except Exception as exc:
+        print(f"[bridge] reset_knob error: {exc}")
 
 
 ui.on_connect(on_connect)

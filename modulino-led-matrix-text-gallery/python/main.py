@@ -30,7 +30,8 @@ def on_show_item(sid, data):
     _broadcast(_call_mcu("show_item", data["index"]))
 
 def on_scroll_text(sid, data):
-    text = data.get("text", "")[:64]
+    # Font_5x7 only has printable ASCII; anything else would be garbled by the 7-bit packing.
+    text = "".join(c for c in data.get("text", "") if " " <= c <= "~")[:64]
     if not text:
         return
     # Pack 8 ASCII chars per call (4 per int arg) to reduce Bridge round-trips.
