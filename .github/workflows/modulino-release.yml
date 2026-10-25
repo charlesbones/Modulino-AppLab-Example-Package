@@ -1,17 +1,17 @@
-# Checks daily for a new Arduino_Modulino release. When one appears, pins it
-# (plus its dependencies) in every sketch.yaml, commits to main, and publishes
-# a new package release (v0.N+1) in the same layout as v0.1.
+# 1. Daily: when a new Arduino_Modulino is released, pin it (plus its
+#    dependencies) in every sketch.yaml on a new branch named after the version
+#    (e.g. 0.11.0), branched from main. Test it on hardware, then merge to main.
+# 2. On push to main: if the pinned Arduino_Modulino version has no package
+#    release yet, publish one (v0.N+1) in the same layout as v0.1.
 name: Release on new Arduino_Modulino
 
 on:
   schedule:
     - cron: "0 6 * * *"
   workflow_dispatch:
-    inputs:
-      force_release:
-        description: Publish a release even if the Modulino version did not change
-        type: boolean
-        default: false
+  push:
+    branches: [main]
+    paths: ["*/sketch/sketch.yaml"]
 
 permissions:
   contents: write
@@ -19,12 +19,13 @@ permissions:
 concurrency: modulino-release
 
 jobs:
-  bump-and-release:
+  bump-branch:
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: main
 
       - name: Test bump script
         working-directory: .github/scripts
@@ -34,22 +35,37 @@ jobs:
         id: bump
         run: python3 .github/scripts/bump_modulino.py
 
-      - name: Commit
-        id: commit
+      - name: Push version branch
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
         run: |
-          if git diff --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if git diff --quiet; then echo "main already pins $VERSION"; exit 0; fi
+          if git ls-remote --exit-code --heads origin "$VERSION" >/dev/null; then
+            echo "branch $VERSION already exists"; exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898208+github-actions[bot]@users.noreply.github.com"
-          git commit -am "Bump Arduino_Modulino to ${{ steps.bump.outputs.version }}"
-          git push
-          echo "changed=true" >> "$GITHUB_OUTPUT"
+          git switch -c "$VERSION"
+          git commit -am "Bump Arduino_Modulino to $VERSION"
+          git push origin "$VERSION"
+
+  release:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Build and publish release
-        if: steps.commit.outputs.changed == 'true' || inputs.force_release
         env:
           GH_TOKEN: ${{ github.token }}
-          MODULINO: ${{ steps.bump.outputs.version }}
         run: |
+          pinned=$(grep -ohP 'Arduino_Modulino \(\K[^)]+' */sketch/sketch.yaml | sort -u)
+          if [ "$(echo "$pinned" | wc -l)" -ne 1 ]; then echo "sketches disagree: $pinned"; exit 1; fi
+          if gh release list --limit 100 --json name -q '.[].name' | grep -qF "(Arduino_Modulino $pinned)"; then
+            echo "release for Arduino_Modulino $pinned already exists"; exit 0
+          fi
           last=$(git tag -l 'v0.*' --sort=-v:refname | head -1)
           tag="v0.$(( ${last#v0.} + 1 ))"
           name="Modulino-AppLab-example-package-$tag"
@@ -58,5 +74,5 @@ jobs:
           (cd dist && zip -qr "$name.zip" "$name")
           gh release create "$tag" "dist/$name.zip" \
             --target "$(git rev-parse HEAD)" \
-            --title "Modulino AppLab example package $tag" \
-            --notes "Built against Arduino_Modulino $MODULINO ([changelog](https://github.com/arduino-libraries/Arduino_Modulino/releases/tag/$MODULINO)). Untested on hardware: automated release."
+            --title "Modulino AppLab example package $tag (Arduino_Modulino $pinned)" \
+            --notes "Built against Arduino_Modulino $pinned ([changelog](https://github.com/arduino-libraries/Arduino_Modulino/releases/tag/$pinned))."
